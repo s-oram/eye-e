@@ -5,11 +5,28 @@
 #include <PN532.h>   // The following files are included in the libraries Installed
 #include <NfcAdapter.h>
 
+#include "SD.h"
+#define SD_ChipSelectPin 4
+#include "TMRpcm.h"
+#include "SPI.h"
+
+TMRpcm tmrpcm;
+
 PN532_I2C pn532_i2c(Wire);
 NfcAdapter nfc = NfcAdapter(pn532_i2c);  // Indicates the Shield you are using
 
 
 void setup(void) {
+  tmrpcm.speakerPin = 9;
+  Serial.begin(9600);
+  if (!SD.begin(SD_ChipSelectPin)) {
+    Serial.println("SD fail");
+    return;
+  }
+  
+  tmrpcm.setVolume(6);
+  tmrpcm.play("rain.wav");
+  
   Serial.begin(9600);
   Serial.println("NFC TAG READER"); // Header used when using the serial monitor
   nfc.begin();
