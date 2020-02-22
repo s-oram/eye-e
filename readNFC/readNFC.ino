@@ -6,9 +6,10 @@
 #include <NfcAdapter.h>
 
 #include "SD.h"
-#define SD_ChipSelectPin 22
+#define SD_ChipSelectPin 53
 #include "TMRpcm.h"
 #include "SPI.h"
+#define LED 7
 
 TMRpcm tmrpcm;
 
@@ -17,7 +18,8 @@ NfcAdapter nfc = NfcAdapter(pn532_i2c);  // Indicates the Shield you are using
 
 
 void setup(void) {
-  tmrpcm.speakerPin = 9;
+  tmrpcm.speakerPin = 11;
+  pinMode(LED , OUTPUT);
   Serial.begin(9600);
   if (!SD.begin(SD_ChipSelectPin)) {
     Serial.println("SD fail");
@@ -37,7 +39,7 @@ void loop(void) {
     NfcTag tag = nfc.read();
     Serial.println(tag.getTagType());
     Serial.print("UID: ");Serial.println(tag.getUidString()); // Retrieves the Unique Identification from your tag
-
+    playWav(tag.getUidString());
     if (tag.hasNdefMessage()) // If your tag has a message
     {
 
@@ -68,37 +70,39 @@ void loop(void) {
         }
         Serial.print("  Information (as String): ");
         Serial.println(payloadAsString);
-
+        Serial.print("My ID:");Serial.print(record.getId());
 
         String uid = record.getId();
         if (uid != "") {
           Serial.print("  ID: ");Serial.println(uid); // Prints the Unique Identification of the NFC Tag
-          //playWav(uid);
+          playWav(uid);
         }
       }
     }
   }
   if (tmrpcm.isPlaying()) {
-    //light on
+    digitalWrite(LED , HIGH);//turn the LED On by making the voltage HIGH
   } else {
-    //light off
+    digitalWrite(LED , LOW);// turn the LED Off by making the voltage LOW
   }
   delay(10000);
 }
 
 void playWav(String uid) {
-  tmrpcm.setVolume(6);
+  tmrpcm.setVolume(7);
   const char* uidStr = uid.c_str();
+  Serial.print("Playing sound");
+  tmrpcm.play("sample1.wav");
 
   if (strcmp(uidStr, "u123456") == 0) 
   {
     // light on
-    tmrpcm.play("rain.wav");
+    tmrpcm.play("sample1.wav");
     // light off
   } else if (strcmp(uidStr, "u678901") == 0)
   {
     // light on
-    tmrpcm.play("sunny.wav");
+    tmrpcm.play("sample1.wav");
     // light off
   }
 }
