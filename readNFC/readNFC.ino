@@ -6,7 +6,7 @@
 #include <NfcAdapter.h>
 
 #include "SD.h"
-#define SD_ChipSelectPin 4
+#define SD_ChipSelectPin 22
 #include "TMRpcm.h"
 #include "SPI.h"
 
@@ -23,9 +23,6 @@ void setup(void) {
     Serial.println("SD fail");
     return;
   }
-  
-  tmrpcm.setVolume(6);
-  tmrpcm.play("rain.wav");
   
   Serial.begin(9600);
   Serial.println("NFC TAG READER"); // Header used when using the serial monitor
@@ -76,9 +73,32 @@ void loop(void) {
         String uid = record.getId();
         if (uid != "") {
           Serial.print("  ID: ");Serial.println(uid); // Prints the Unique Identification of the NFC Tag
+          //playWav(uid);
         }
       }
     }
   }
+  if (tmrpcm.isPlaying()) {
+    //light on
+  } else {
+    //light off
+  }
   delay(10000);
+}
+
+void playWav(String uid) {
+  tmrpcm.setVolume(6);
+  const char* uidStr = uid.c_str();
+
+  if (strcmp(uidStr, "u123456") == 0) 
+  {
+    // light on
+    tmrpcm.play("rain.wav");
+    // light off
+  } else if (strcmp(uidStr, "u678901") == 0)
+  {
+    // light on
+    tmrpcm.play("sunny.wav");
+    // light off
+  }
 }
