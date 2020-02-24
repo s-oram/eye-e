@@ -82,27 +82,27 @@ void loop(void) {
   }
   if (tmrpcm.isPlaying()) {
     digitalWrite(LED , HIGH);//turn the LED On by making the voltage HIGH
+    delay(500);
+    digitalWrite(LED , LOW);// turn the LED Off by making the voltage LOW
   } else {
     digitalWrite(LED , LOW);// turn the LED Off by making the voltage LOW
   }
-  delay(10000);
+  delay(1000);
 }
 
 void playWav(String uid) {
   tmrpcm.setVolume(7);
   const char* uidStr = uid.c_str();
   Serial.print("Playing sound");
-  tmrpcm.play("sample1.wav");
+  //tmrpcm.play("sample1.wav");
 
-  if (strcmp(uidStr, "u123456") == 0) 
+  if (strcmp(uidStr, "80 C4 B1 DA") == 0) 
   {
-    // light on
-    tmrpcm.play("sample1.wav");
-    // light off
-  } else if (strcmp(uidStr, "u678901") == 0)
+    if (!tmrpcm.isPlaying()) {
+      tmrpcm.play("sample1.wav");
+    }
+  } else if (strcmp(uidStr, "C0 14 B2 DA") == 0)
   {
-    // light on
-    tmrpcm.play("sample1.wav");
-    // light off
+    tmrpcm.play("sample4.wav");
   }
 }
